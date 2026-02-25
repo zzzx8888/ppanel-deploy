@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ppanel-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ppanel-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASS} --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    image: ${DOCKER_IMAGE_SERVER}
+    container_name: ${CONTAINER_NAME_SERVER}
+    # 注释掉本地构建，改用远程拉取
+    # build:
+    #   context: ../ppanel-server
+    #   dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "${HOST_PORT_SERVER}:8080"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ../ppanel-server/etc:/app/etc
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  admin-web:
+    image: ${DOCKER_IMAGE_ADMIN}
+    container_name: ${CONTAINER_NAME_ADMIN}
+    # build:
+    #   context: ../ppanel-web
+    #   dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "${HOST_PORT_ADMIN}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_GITHUB_TOKEN=${NEXT_PUBLIC_GITHUB_TOKEN:-}
+    depends_on:
+      - server
+
+volumes:
+  mysql_data:
+  redis_data:
