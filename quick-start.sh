@@ -46,4 +46,7 @@ rm -f push.bat deployment-guide.md migration-guide.md upgrade-guide.md
 rm -rf .git ../ppanel-server/.git ../ppanel-web/.git
 
 echo -e "${GREEN}==== PPanel 全自动部署已完成！ ====${NC}"
-echo -e "您可以访问: http://您的服务器IP:3000 进入管理后台"
+echo -e "您可以访问:"
+echo -e "管理端: http://您的服务器IP:3000"
+echo -e "用户端: http://您的服务器IP:3001"
+echo -e "服务端: http://您的服务器IP:8080"

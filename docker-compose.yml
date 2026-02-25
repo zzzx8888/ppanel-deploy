@@ -68,6 +68,17 @@ services:
     depends_on:
       - server
 
+  user-web:
+    image: ${DOCKER_IMAGE_USER}
+    container_name: ${CONTAINER_NAME_USER}
+    restart: always
+    ports:
+      - "${HOST_PORT_USER}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    depends_on:
+      - server
+
 volumes:
   mysql_data:
   redis_data:

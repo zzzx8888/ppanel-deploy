@@ -118,6 +118,7 @@ echo -e "${BLUE}检查容器状态:${NC}"
 ${DOCKER_COMPOSE_CMD} ps
 
 echo -e "${GREEN}==== 部署完成 ====${NC}"
-echo -e "服务端接口地址: http://localhost:8080"
-echo -e "管理后台地址: http://localhost:3000"
+echo -e "服务端接口地址: http://localhost:${HOST_PORT_SERVER:-8080}"
+echo -e "管理后台地址: http://localhost:${HOST_PORT_ADMIN:-3000}"
+echo -e "用户中心地址: http://localhost:${HOST_PORT_USER:-3001}"
 echo -e "请务必检查 ppanel-server/etc/ppanel.yaml 中的数据库配置是否与 .env 一致。"

@@ -73,7 +73,8 @@ echo -e "${BLUE}正在配置参数...${NC}"
 
 # 端口配置
 SERVER_PORT=8080
-WEB_PORT=3000
+ADMIN_PORT=3000
+USER_PORT=3001
 
 # 获取服务器 IP
 PUBLIC_IP=$(curl -s ifconfig.me || echo "127.0.0.1")
@@ -82,9 +83,13 @@ echo -e "${BLUE}请输入服务端端口 (默认: ${SERVER_PORT}):${NC}"
 read_input input_server_port
 SERVER_PORT=${input_server_port:-$SERVER_PORT}
 
-echo -e "${BLUE}请输入 Web 端端口 (默认: ${WEB_PORT}):${NC}"
-read_input input_web_port
-WEB_PORT=${input_web_port:-$WEB_PORT}
+echo -e "${BLUE}请输入管理端 (Admin) 端口 (默认: ${ADMIN_PORT}):${NC}"
+read_input input_admin_port
+ADMIN_PORT=${input_admin_port:-$ADMIN_PORT}
+
+echo -e "${BLUE}请输入用户端 (User) 端口 (默认: ${USER_PORT}):${NC}"
+read_input input_user_port
+USER_PORT=${input_user_port:-$USER_PORT}
 
 echo -e "${BLUE}请输入您的服务器 IP 或域名 (用于 Web 端连接服务端，默认: ${PUBLIC_IP}):${NC}"
 read_input input_ip
@@ -249,7 +254,8 @@ JWT_SECRET=${JWT_SECRET}
 ADMIN_EMAIL=${ADMIN_EMAIL}
 ADMIN_PASSWORD=${ADMIN_PASSWORD}
 SERVER_PORT=${SERVER_PORT}
-WEB_PORT=${WEB_PORT}
+ADMIN_PORT=${ADMIN_PORT}
+USER_PORT=${USER_PORT}
 HOST_IP=${HOST_IP}
 EOF
 
@@ -337,7 +343,18 @@ cat >> docker-compose.yml <<EOF
     container_name: ppanel-admin-web
     restart: always
     ports:
-      - "\${WEB_PORT}:3000"
+      - "\${ADMIN_PORT}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://\${HOST_IP}:\${SERVER_PORT}
+    depends_on:
+      - server
+
+  user-web:
+    image: ssrcoco/ppanel-user-web:latest
+    container_name: ppanel-user-web
+    restart: always
+    ports:
+      - "\${USER_PORT}:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://\${HOST_IP}:\${SERVER_PORT}
     depends_on:
@@ -393,7 +410,8 @@ echo -e "${BLUE}正在拉取镜像并启动服务...${NC}"
 ${DOCKER_COMPOSE_CMD} up -d
 
 echo -e "${GREEN}==== 安装完成 ====${NC}"
-echo -e "管理面板地址: http://${HOST_IP}:${WEB_PORT}"
+echo -e "管理端地址: http://${HOST_IP}:${ADMIN_PORT}"
+echo -e "用户端地址: http://${HOST_IP}:${USER_PORT}"
 echo -e "服务端地址: http://${HOST_IP}:${SERVER_PORT}"
 echo -e "管理员账号: ${ADMIN_EMAIL}"
 echo -e "管理员密码: ${ADMIN_PASSWORD}"

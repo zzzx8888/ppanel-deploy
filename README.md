@@ -12,6 +12,12 @@
 curl -fsSL https://raw.githubusercontent.com/zzzx8888/ppanel-deploy/main/install.sh | bash
 ```
 
+```
+echo -e "管理端地址: http://${HOST_IP}:${ADMIN_PORT}"
+echo -e "用户端地址: http://${HOST_IP}:${USER_PORT}"
+echo -e "服务端地址: http://${HOST_IP}:${SERVER_PORT}"
+```
+
 ---
 
 ## 🛠️ 手动部署 (源码安装)
