@@ -11,43 +11,31 @@
 ### 1. 环境准备
 确保服务器已安装 **Docker** 和 **Docker Compose**。
 
-### 2. 克隆部署项目
-建议在服务器创建一个统一的目录（如 `/app/ppanel`），并将三个相关仓库克隆到同一目录下：
+### 2. 克隆部署中心并一键初始化
+建议在服务器创建一个统一的目录（如 `/app/ppanel`）：
 
 ```bash
 mkdir -p /app/ppanel && cd /app/ppanel
 
-# 克隆部署中心
+# 1. 只需克隆部署中心
 git clone https://github.com/zzzx8888/ppanel-deploy.git
-# 克隆源码项目 (用于 Docker 挂载配置文件或本地构建备份)
-git clone https://github.com/zzzx8888/ppanel-server.git
-git clone https://github.com/zzzx8888/ppanel-web.git
-```
 
-### 3. 初始化配置
-```bash
+# 2. 进入目录并运行一键初始化脚本
 cd ppanel-deploy
-cp .env.example .env
-# 使用 vi 或 nano 修改 .env 中的数据库密码、Redis 密码及 SECRET_KEY
-vi .env
+chmod +x quick-start.sh
+./quick-start.sh
 ```
-
-### 4. 执行一键部署
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-> **注意**：由于采用了 GitHub Actions 自动构建方案，`deploy.sh` 会直接从 Docker Hub 拉取已编译好的镜像，**不再消耗服务器内存进行现场编译**，2G 内存机器也可稳定运行。
+> **提示**：`quick-start.sh` 会自动帮你克隆缺少的 `ppanel-server` 和 `ppanel-web` 仓库，并引导你完成 `.env` 配置和容器启动。
 
 ---
 
 ## 🛠️ 日常开发与更新流程 (本地端)
 
-当你修改了 `ppanel-server` 或 `ppanel-web` 的代码后，只需执行以下操作：
+当你修改了 `ppanel-server`、`ppanel-web` 或 `ppanel-deploy` 中的任何代码后，只需执行以下操作：
 
-1.  **一键推送**：进入本地 `ppanel-deploy` 文件夹，双击运行 **`push.bat`**。
-2.  **自动构建**：GitHub Actions 会自动感应推送并开始构建 Docker 镜像。
-3.  **服务器更新**：等待 GitHub Actions 构建成功（绿色勾勾）后，在服务器执行：
+1.  **一键全推**：进入本地 `ppanel-deploy` 文件夹，双击运行 **`push.bat`**。它会一次性将**三个项目**的所有改动全部推送到 GitHub。
+2.  **自动构建**：GitHub Actions 会自动感应推送并开始构建新的 Docker 镜像。
+3.  **服务器更新**：等待构建成功后，在服务器执行：
     ```bash
     cd /app/ppanel/ppanel-deploy
     ./deploy.sh
