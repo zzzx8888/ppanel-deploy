@@ -342,15 +342,20 @@ cat >> docker-compose.yml <<EOF
       - NEXT_PUBLIC_API_URL=http://\${HOST_IP}:\${SERVER_PORT}
     depends_on:
       - server
+EOF
+
+# 只有在使用内部组件时才生成 volumes 部分
+if [ "$USE_INTERNAL_MYSQL" == "true" ] || [ "$USE_INTERNAL_REDIS" == "true" ]; then
+cat >> docker-compose.yml <<EOF
 
 volumes:
 EOF
-
-if [ "$USE_INTERNAL_MYSQL" == "true" ]; then
-    echo "  mysql_data:" >> docker-compose.yml
-fi
-if [ "$USE_INTERNAL_REDIS" == "true" ]; then
-    echo "  redis_data:" >> docker-compose.yml
+    if [ "$USE_INTERNAL_MYSQL" == "true" ]; then
+        echo "  mysql_data:" >> docker-compose.yml
+    fi
+    if [ "$USE_INTERNAL_REDIS" == "true" ]; then
+        echo "  redis_data:" >> docker-compose.yml
+    fi
 fi
 
 # 6. 创建配置文件
