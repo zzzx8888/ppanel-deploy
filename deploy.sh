@@ -36,15 +36,23 @@ echo -e "${GREEN}检测到 Compose 命令: ${DOCKER_COMPOSE_CMD}${NC}"
 # 2. 检查并创建配置文件
 if [ ! -f docker-compose.yml ] && [ ! -f docker-compose.yaml ]; then
   echo -e "${RED}错误: 在当前目录下未找到 docker-compose.yml 文件。${NC}"
-  echo -e "${BLUE}请确保你已经上传了该文件到 $(pwd) 目录下。${NC}"
   exit 1
 fi
 
 if [ ! -f .env ]; then
-  echo -e "${BLUE}正在创建 .env 配置文件...${NC}"
+  echo -e "${BLUE}正在初始化 .env 配置文件...${NC}"
   cp .env.example .env
-  echo -e "${GREEN}请修改 .env 文件中的数据库密码和 SECRET_KEY 后再运行脚本。${NC}"
-  exit 0
+  
+  # 交互式设置关键变量
+  echo -e "${BLUE}为了安全，请设置您的数据库 Root 密码:${NC}"
+  read -r db_root_pass
+  sed -i "s/your_strong_root_password/$db_root_pass/g" .env
+  
+  echo -e "${BLUE}请设置您的 SECRET_KEY (用于 JWT 签名，建议 32 位以上随机字符):${NC}"
+  read -r secret_key
+  sed -i "s/your_random_secret_key/$secret_key/g" .env
+  
+  echo -e "${GREEN}配置已自动更新到 .env 文件。${NC}"
 fi
 
 # 3. 拉取最新代码 (可选)

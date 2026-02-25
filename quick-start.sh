@@ -33,9 +33,17 @@ else
     echo -e "${GREEN}检测到 Web 端已存在。${NC}"
 fi
 
-# 2. 调用原有的部署脚本
+# 2. 调用部署脚本并处理
 echo -e "${BLUE}[2/3] 进入部署流程...${NC}"
 chmod +x deploy.sh
 ./deploy.sh
 
-echo -e "${GREEN}==== 所有操作已完成 ====${NC}"
+# 3. 清理生产环境冗余文件
+echo -e "${BLUE}[3/3] 正在清理生产环境冗余文件...${NC}"
+# 删除 Windows 脚本和多余的文档
+rm -f push.bat deployment-guide.md migration-guide.md upgrade-guide.md
+# 隐藏 Git 信息
+rm -rf .git ../ppanel-server/.git ../ppanel-web/.git
+
+echo -e "${GREEN}==== PPanel 全自动部署已完成！ ====${NC}"
+echo -e "您可以访问: http://您的服务器IP:3000 进入管理后台"
