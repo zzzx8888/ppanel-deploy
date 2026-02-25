@@ -55,6 +55,47 @@ if [ ! -f .env ]; then
   echo -e "${GREEN}配置已自动更新到 .env 文件。${NC}"
 fi
 
+# 检查并生成 ppanel.yaml 配置文件 (如果不存在或为空)
+PPANEL_CONFIG="../ppanel-server/etc/ppanel.yaml"
+if [ -d "../ppanel-server" ]; then
+  if [ ! -f "$PPANEL_CONFIG" ] || [ ! -s "$PPANEL_CONFIG" ]; then
+    echo -e "${BLUE}正在初始化 ppanel.yaml 配置文件...${NC}"
+    # 加载环境变量
+    if [ -f .env ]; then
+      export $(grep -v '^#' .env | xargs)
+    fi
+    
+    cat > "$PPANEL_CONFIG" <<EOF
+Host: 0.0.0.0
+Port: 8080
+Debug: false
+JwtAuth:
+  AccessSecret: ${SECRET_KEY}
+  AccessExpire: 604800
+Logger:
+  FilePath: ./ppanel.log
+  Level: info
+MySQL:
+  Addr: mysql:3306
+  Username: ${MYSQL_USER}
+  Password: ${MYSQL_PASSWORD}
+  Dbname: ${MYSQL_DB}
+  Config: charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  MaxIdleConns: 10
+  MaxOpenConns: 10
+  SlowThreshold: 1000
+Redis:
+  Host: redis:6379
+  Pass: ${REDIS_PASS}
+  DB: 0
+Administrator:
+  Email: admin@ppanel.dev
+  Password: password
+EOF
+    echo -e "${GREEN}配置文件已生成: $PPANEL_CONFIG${NC}"
+  fi
+fi
+
 # 3. 拉取最新代码 (可选)
 echo -e "${BLUE}是否拉取最新代码? (y/n)${NC}"
 read -r pull_code

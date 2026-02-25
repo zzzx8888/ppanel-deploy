@@ -4,9 +4,19 @@
 
 ---
 
-## 🚀 快速开始 (服务器端)
+## 🚀 一键安装 (推荐)
 
-如果你是第一次在服务器上部署，请按照以下步骤操作：
+无需下载任何代码，只需在服务器执行以下命令即可完成安装：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zzzx8888/ppanel-deploy/main/install.sh | bash
+```
+
+---
+
+## 🛠️ 手动部署 (源码安装)
+
+如果你希望通过源码进行部署，请按照以下步骤操作：
 
 ### 1. 环境准备
 确保服务器已安装 **Docker** 和 **Docker Compose**。

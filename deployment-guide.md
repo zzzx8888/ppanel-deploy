@@ -13,9 +13,19 @@
 
 ---
 
-## 🚀 快速部署 (Docker Compose)
+## 🚀 快速部署
 
-这是最推荐的生产环境部署方案，能够一键启动所有组件。
+### 方式一：一键安装 (推荐)
+
+无需下载任何代码，只需在服务器执行以下命令即可完成安装：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zzzx8888/ppanel-deploy/main/install.sh | bash
+```
+
+### 方式二：Docker Compose 手动部署
+
+这是手动配置的生产环境部署方案。
 
 ### 1. 准备工作
 克隆你自己的代码仓库：
